@@ -53,6 +53,7 @@ services:
     volumes:
       - ./bot:/app
       - ./server/app/db:/app/db
+      - ./server/app/util:/app/util
     env_file:
       - ./envs/bot.env
       - ./envs/db.env

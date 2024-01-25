@@ -4,6 +4,12 @@ build:
 up:
 	docker compose up -d
 
+up-bot:
+	docker compose up -d bot
+
+up-server:
+	docker compose up -d server
+
 down:
 	docker compose down
 

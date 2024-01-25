@@ -3,19 +3,34 @@ from datetime import datetime
 from pydantic import BaseModel
 
 
-class TemplateBase(BaseModel):
-    name: str
+class ThreadListManageTargetBase(BaseModel):
+    guild_id: str
+    channel_id: str
 
 
-class TemplateCreate(TemplateBase):
+class ThreadListManageTargetCreate(ThreadListManageTargetBase):
     pass
 
 
-class TemplateUpdate(TemplateBase):
+class ThreadListManageTarget(ThreadListManageTargetBase):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        orm_mode = True
+
+
+class GuildConfigBase(BaseModel):
+    guild_id: str
+    thread_list_threshold: int | None
+
+
+class GuildConfigCreate(GuildConfigBase):
     pass
 
 
-class TemplatePublic(TemplateBase):
+class GuildConfig(GuildConfigBase):
     id: int
     created_at: datetime
     updated_at: datetime
