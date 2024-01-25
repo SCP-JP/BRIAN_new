@@ -49,10 +49,15 @@ class ThreadListManager(commands.Cog):
 
     @staticmethod
     def build_item_str(thread: discord.Thread) -> str:
+        created_at = thread.created_at
+
+        created_at_str = f"<t:{int(created_at.timestamp())}:d> (<t:{int(created_at.timestamp())}:R>)" \
+            if created_at is not None else "取得できないほどむかし"
+
         return "\n".join([
             f"**{thread.mention}**",
             f"> 作成者： {thread.owner.mention}",
-            f"> 作成日時： <t:{int(thread.created_at.timestamp())}:d> (<t:{int(thread.created_at.timestamp())}:R>)"
+            f"> 作成日時： {created_at_str}",
         ])
 
     @staticmethod
