@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import discord
 from discord import Message
 from discord.ext import commands
@@ -51,8 +53,11 @@ class ThreadListManager(commands.Cog):
     def build_item_str(thread: discord.Thread) -> str:
         created_at = thread.created_at
 
-        created_at_str = f"<t:{int(created_at.timestamp())}:d> (<t:{int(created_at.timestamp())}:R>)" \
-            if created_at is not None else "取得できないほどむかし"
+        if created_at is not None:
+            created_at_str = f"<t:{int(created_at.timestamp())}:d> (<t:{int(created_at.timestamp())}:R>)"
+        else:
+            created_at_timestamp = 1641686400
+            created_at_str = f"<t:{created_at_timestamp}:d> よりも前"
 
         return "\n".join([
             f"**{thread.mention}**",
