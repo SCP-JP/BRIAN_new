@@ -16,6 +16,9 @@ if bot_config.SENTRY_DSN is not None and bot_config.SENTRY_DSN != "":
         dsn=bot_config.SENTRY_DSN,
         traces_sample_rate=1.0
     )
+    logging.info("SENTRY is enabled.")
+else:
+    logging.warning("SENTRY_DSN is not configured.")
 
 if bot_config.TOKEN is None or bot_config.TOKEN == "":
     logging.error("TOKEN is not set.")
