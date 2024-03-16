@@ -35,5 +35,6 @@ bot.load_extension("cogs.Admin")
 bot.load_extension("cogs.CogManager")
 
 bot.load_extension("cogs.ThreadListManager")
+bot.load_extension("cogs.Reminder")
 
 bot.run(bot_config.TOKEN)

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, BigInteger, DateTime, UniqueConstraint
+from sqlalchemy import Column, Integer, BigInteger, DateTime, UniqueConstraint, Boolean, String
 
 from .connection import Base
 
@@ -31,6 +31,24 @@ class GuildConfig(Base):
 
     # BOT: ThreadListManager
     thread_list_threshold = Column(Integer, nullable=True)
+
+    created_at = Column(DateTime, default=datetime.now)
+    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+
+class RemindTarget(Base):
+    __tablename__ = 'remind_target'
+
+    id = Column(Integer, primary_key=True)
+
+    user_id = Column(BigInteger, nullable=False)
+    channel_id = Column(BigInteger, nullable=False)
+
+    note = Column(String, nullable=True, default=None)
+
+    remind_at = Column(DateTime, nullable=False)
+
+    is_reminded = Column(Boolean, default=False)
 
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
