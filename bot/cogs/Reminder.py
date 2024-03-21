@@ -39,9 +39,9 @@ class Reminder(commands.Cog):
                     continue
 
                 # channelがmention属性を持っていたらそれを利用、持っていなかったら省略
-                if channel.mention:
+                try:
                     mention = channel.mention
-                else:
+                except AttributeError:
                     mention = "不明なチャンネル"
 
                 await user.send(f'リマインド： {mention} {f"（{target.note}）" if target.note else ""}')
