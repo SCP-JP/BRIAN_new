@@ -38,7 +38,13 @@ class Reminder(commands.Cog):
                 if channel is None or user is None:
                     continue
 
-                await user.send(f'リマインド： {channel.mention} {f"（{target.note}）" if target.note else ""}')
+                # channelがmention属性を持っていたらそれを利用、持っていなかったら省略
+                if channel.mention:
+                    mention = channel.mention
+                else:
+                    mention = "不明なチャンネル"
+
+                await user.send(f'リマインド： {mention} {f"（{target.note}）" if target.note else ""}')
 
                 RemindTargetCrud.update_remind_flag(db, target.id)
 
