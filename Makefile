@@ -4,14 +4,20 @@ build:
 up:
 	docker compose up -d
 
+down:
+	docker compose down
+
 up-bot:
 	docker compose up -d bot
+
+down-bot:
+	docker compose down bot
 
 up-server:
 	docker compose up -d server
 
-down:
-	docker compose down
+down-server:
+	docker compose down server
 
 reset:
 	docker compose down --volumes --remove-orphans

@@ -1,13 +1,13 @@
-name: CD
+name: Deploy
 on:
   push:
-    branches: [ develop ]
+    branches: [ main ]
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Install SSH Key for Deploy
+      - name: Deploy
         uses: appleboy/ssh-action@master
         with:
           key: ${{ secrets.SK }}
@@ -15,9 +15,10 @@ jobs:
           username: ${{secrets.SSH_USERNAME}}
           port: ${{secrets.SSH_PORT}}
           script: |
-            cd isp2-b02-backend
-            git pull origin develop
+            cd BRIAN_new
+            git switch main
+            git pull origin main
             make build
             make down
-            make up
             make migrate
+            make up-bot
