@@ -12,7 +12,7 @@ jobs:
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           host: ${{secrets.SSH_HOST}}
-          username: ${{secrets.SSH_USERNAME}}
+          username: ${{secrets.SSH_USER}}
           port: ${{secrets.SSH_PORT}}
           script: |
             cd BRIAN_new
