@@ -6,7 +6,7 @@ from discord.ext import commands, tasks
 
 from db.package.crud.remind_target import RemindTargetCrud
 from db.package.models import RemindTarget
-from db.package.session import db_context
+from db.package.session import get_db
 
 
 class Reminder(commands.Cog):
@@ -25,7 +25,7 @@ class Reminder(commands.Cog):
 
     @tasks.loop(seconds=60)
     async def remind_task(self):
-        with db_context() as db:
+        with get_db() as db:
             targets: list[RemindTarget] = RemindTargetCrud.get_targets(db)
 
             for target in targets:
@@ -68,7 +68,7 @@ class Reminder(commands.Cog):
             note: discord.Option(str, "リマインド時に表示するメモ", required=False),
     ):
         remind_at = datetime.now() + timedelta(hours=after)
-        with db_context() as db:
+        with get_db() as db:
             remind_target = RemindTargetCrud.create(db, ctx.author.id, ctx.channel.id, note, remind_at, target_to)
 
         await ctx.respond(
@@ -78,7 +78,7 @@ class Reminder(commands.Cog):
 
     @slash_command(name="list_reminder", description="リマインドリストを表示します")
     async def list_reminder(self, ctx):
-        with db_context() as db:
+        with get_db() as db:
             reminders = RemindTargetCrud.get_user_targets(db, ctx.author.id)
 
         if not reminders:
