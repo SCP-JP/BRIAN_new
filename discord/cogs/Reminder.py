@@ -9,6 +9,37 @@ from db.package.models import RemindTarget
 from db.package.session import get_db
 
 
+class CreateSnoozeView(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=None)
+
+    @discord.ui.button(label="スヌーズ", style=discord.ButtonStyle.primary, custom_id="reminder:create_snooze")
+    async def create_snooze(self, _: discord.ui.Button, interaction: discord.Interaction):
+        remind_message_id = interaction.message.id
+
+        with get_db() as db:
+            origin_remind = RemindTargetCrud.get_by_remind_message_id(db, remind_message_id)
+            if origin_remind is None:
+                return
+
+            RemindTargetCrud.create_snooze(db, origin_remind)
+
+        await interaction.response.edit_message(view=CancelSnoozeView())
+
+
+class CancelSnoozeView(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=None)
+
+    @discord.ui.button(label="スヌーズを解除", style=discord.ButtonStyle.danger, custom_id="reminder:cancel_snooze")
+    async def cancel_snooze(self, _: discord.ui.Button, interaction: discord.Interaction):
+        remind_message_id = interaction.message.id
+        with get_db() as db:
+            RemindTargetCrud.cancel_snooze(db, remind_message_id)
+
+        await interaction.response.edit_message(view=CreateSnoozeView())
+
+
 class Reminder(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -18,12 +49,15 @@ class Reminder(commands.Cog):
         self.remind_task.stop()
         self.remind_task.start()
 
+        self.bot.add_view(CreateSnoozeView())
+        self.bot.add_view(CancelSnoozeView())
+
     @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
+    async def on_message(self, _: discord.Message):
         if not self.remind_task.is_running():
             self.remind_task.start()
 
-    @tasks.loop(seconds=60)
+    @tasks.loop(seconds=30)
     async def remind_task(self):
         with get_db() as db:
             targets: list[RemindTarget] = RemindTargetCrud.get_targets(db)
@@ -39,6 +73,11 @@ class Reminder(commands.Cog):
                 if channel is None or user is None:
                     continue
 
+                if target.is_snooze:
+                    view = CancelSnoozeView()
+                else:
+                    view = CreateSnoozeView()
+
                 # target_toがNoneならDMにリマインド
                 if target.remind_to is None or target.remind_to == "":
                     # channelがmention属性を持っていたらそれを利用、持っていなかったら省略
@@ -47,18 +86,29 @@ class Reminder(commands.Cog):
                     except AttributeError:
                         mention = "不明なチャンネル"
 
-                    await user.send(f'リマインド： {mention} {f"（{target.note}）" if target.note else ""}')
+                    msg = await user.send(f'リマインド： {mention} {f"（{target.note}）" if target.note else ""}',
+                                          view=view)
 
                 # target_toがNoneでないなら作成したチャンネルにリマインド
                 else:
-                    await channel.send("\n".join([
+                    msg = await channel.send("\n".join([
                         f"### 【リマインド】",
                         f"作成者： {user.mention}",
                         f"対象者： {target.remind_to}",
                         f" {target.note if target.note else ''}"
-                    ]))
+                    ]), view=view)
 
-                RemindTargetCrud.update_remind_flag(db, target.id)
+                # リマインドメッセージのIDを保存
+                RemindTargetCrud.update_remind_flag(db, target.id, msg.id)
+
+                # スヌーズリマインドを作成
+                if target.is_snooze:
+                    RemindTargetCrud.create_snooze(db, target)
+
+                # 元メッセージのスヌーズViewを削除
+                if target.previous_remind_message_id:
+                    previous_message = await channel.fetch_message(target.previous_remind_message_id)
+                    await previous_message.edit(view=None)
 
     @slash_command(name="remind", description="指定した日時にリマインドします")
     async def remind(
@@ -66,10 +116,11 @@ class Reminder(commands.Cog):
             after: discord.Option(int, "X時間後にリマインド"),
             target_to: discord.Option(str, "リマインド対象", required=False),
             note: discord.Option(str, "リマインド時に表示するメモ", required=False),
+            snooze: discord.Option(bool, "スヌーズを設定するか", required=False, default=False)
     ):
         remind_at = datetime.now() + timedelta(hours=after)
         with get_db() as db:
-            remind_target = RemindTargetCrud.create(db, ctx.author.id, ctx.channel.id, note, remind_at, target_to)
+            RemindTargetCrud.create(db, ctx.author.id, ctx.channel.id, note, remind_at, target_to, snooze)
 
         await ctx.respond(
             f"{ctx.author.mention} {after}時間後にリマインドします",
