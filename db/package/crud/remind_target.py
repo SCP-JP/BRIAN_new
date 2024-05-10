@@ -63,6 +63,12 @@ class RemindTargetCrud:
         return True
 
     @staticmethod
+    def get_by_remind_message_id(db: Session, remind_message_id: int):
+        return db.query(models.RemindTarget).filter(
+            models.RemindTarget.remind_message_id == remind_message_id
+        ).first()
+
+    @staticmethod
     def get_last_created_reminder(db: Session, user_id: int, channel_id: int):
         return db.query(models.RemindTarget).filter(
             models.RemindTarget.user_id == user_id,
