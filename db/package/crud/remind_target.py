@@ -47,7 +47,8 @@ class RemindTargetCrud:
     def create_snooze(db: Session, existing_target: models.RemindTarget):
         existing_target = RemindTargetCrud.refresh(db, existing_target)
 
-        interval_hours = round((existing_target.remind_at.timestamp() - existing_target.created_at.timestamp()) / 3600)
+        # interval_hours = round((existing_target.remind_at.timestamp() - existing_target.created_at.timestamp()) / 3600)
+        interval_hours = 24
         remind_at = existing_target.remind_at + timedelta(hours=interval_hours)
         return RemindTargetCrud.create(
             db, existing_target.user_id, existing_target.channel_id, existing_target.note,
