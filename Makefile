@@ -1,5 +1,5 @@
 ENV ?= "dev"
-POETRY_GROUPS = "server,discord,db,dev"
+POETRY_GROUPS = "discord,db,dev"
 
 ifeq ($(ENV), prod)
 	COMPOSE_YML := compose.prod.yml
@@ -25,7 +25,7 @@ reload:
 	docker compose -f $(COMPOSE_YML) up -d
 
 reset:
-	docker compose -f $(COMPOSE_YML) down --volumes --remove-orphans
+	docker compose -f $(COMPOSE_YML) down --volumes --remove-orphans --rmi all
 
 logs:
 	docker compose -f $(COMPOSE_YML) logs -f
@@ -61,24 +61,23 @@ poetry\:reset:
 	poetry env remove $(which python)
 	poetry install
 
+poetry\:shell:
+	poetry shell
+
 dev\:setup:
 	poetry install --with $(POETRY_GROUPS)
 
 db\:revision\:create:
-	docker compose -f $(COMPOSE_YML) up --build -d db-migrator
-	docker compose -f $(COMPOSE_YML) exec db-migrator /bin/bash -c "alembic revision --autogenerate -m '${NAME}'"
-	docker compose -f $(COMPOSE_YML) down db-migrator
+	docker compose -f $(COMPOSE_YML) build db-migrator
+	docker compose -f $(COMPOSE_YML) run --rm db-migrator /bin/bash -c "alembic revision --autogenerate -m '${NAME}'"
 
 db\:migrate:
-	# db-migrator起動時に自動実行
-	docker compose -f $(COMPOSE_YML) down db-migrator
-	docker compose -f $(COMPOSE_YML) up --build -d db-migrator
-	docker compose -f $(COMPOSE_YML) down db-migrator
+	docker compose -f $(COMPOSE_YML) build db-migrator
+	docker compose -f $(COMPOSE_YML) run --rm db-migrator /bin/bash -c "alembic upgrade head"
 
 envs\:init:
 	cp envs/discord.env.example envs/discord.env
 	cp envs/db.env.example envs/db.env
 	cp envs/sentry.env.example envs/sentry.env
-	cp envs/server.env.example envs/server.env
 
 PHONY: build up down logs ps pr\:create deploy\:prod poetry\:install poetry\:add poetry\:lock poetry\:update poetry\:reset dev\:setup db\:revision\:create db\:migrate envs\:init
