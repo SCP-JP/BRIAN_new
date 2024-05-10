@@ -58,6 +58,8 @@ class RemindTarget(Base):
 
     # リマインド済であるか
     is_reminded = Column(Boolean, default=False)
+    # リマインドしたときのDiscordメッセージID
+    remind_message_id = Column(BigInteger, nullable=True, default=None)
 
     # スヌーズを行うか
     is_snooze = Column(Boolean, default=False)
