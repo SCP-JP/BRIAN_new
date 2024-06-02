@@ -30,21 +30,6 @@ updates:
     reviewers:
       - "ukwhatn"
 
-  - package-ecosystem: "npm"
-    directory: "/front"
-    schedule:
-      interval: "daily"
-    target-branch: "develop"
-    commit-message:
-      prefix: "chore(deps:npm)"
-    labels:
-      - "dependencies"
-      - "automated pr"
-    assignees:
-      - "ukwhatn"
-    reviewers:
-      - "ukwhatn"
-
   - package-ecosystem: "docker"
     directory: "/db"
     schedule:
@@ -67,21 +52,6 @@ updates:
     target-branch: "develop"
     commit-message:
       prefix: "chore(deps:dockerfile-server)"
-    labels:
-      - "dependencies"
-      - "automated pr"
-    assignees:
-      - "ukwhatn"
-    reviewers:
-      - "ukwhatn"
-
-  - package-ecosystem: "docker"
-    directory: "/server"
-    schedule:
-      interval: "daily"
-    target-branch: "develop"
-    commit-message:
-      prefix: "chore(deps:dockerfile-bot)"
     labels:
       - "dependencies"
       - "automated pr"
