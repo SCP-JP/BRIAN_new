@@ -105,10 +105,10 @@ class Reminder(commands.Cog):
                 if target.is_snooze:
                     RemindTargetCrud.create_snooze(db, target)
 
-                # 元メッセージのスヌーズViewを削除
+                # 元メッセージを削除
                 if target.previous_remind_message_id:
                     previous_message = await channel.fetch_message(target.previous_remind_message_id)
-                    await previous_message.edit(view=None)
+                    await previous_message.delete()
 
     @slash_command(name="remind", description="指定した日時にリマインドします")
     async def remind(
