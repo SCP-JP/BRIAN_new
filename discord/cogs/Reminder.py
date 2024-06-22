@@ -99,7 +99,8 @@ class Reminder(commands.Cog):
                                 f" {target.note if target.note else ''}"
                             ]), view=view)
                         except discord.Forbidden:
-                            await NOTIFY_TO_OWNER(self.bot, f"Forbidden: DM to {user.name}")
+                            await NOTIFY_TO_OWNER(self.bot,
+                                                  f"Forbidden: Send a msg in {channel.mention}")
                             continue
 
                 # target_toがNoneでないなら作成したチャンネルにリマインド
