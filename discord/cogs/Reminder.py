@@ -93,13 +93,14 @@ class Reminder(commands.Cog):
                     except discord.Forbidden:
                         try:
                             msg = await channel.send("\n".join([
-                                f"### 【リマインド】",
+                                f"### 【リマインド：DM送信権限なし】",
                                 f"作成者： {user.mention}",
                                 f"対象者： {mention}",
                                 f" {target.note if target.note else ''}"
                             ]), view=view)
                         except discord.Forbidden:
-                            await NOTIFY_TO_OWNER(self.bot, f"Forbidden: DM to {user.name}")
+                            await NOTIFY_TO_OWNER(self.bot,
+                                                  f"Forbidden: Send a msg in {channel.mention}")
                             continue
 
                 # target_toがNoneでないなら作成したチャンネルにリマインド
