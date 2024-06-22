@@ -93,7 +93,7 @@ class Reminder(commands.Cog):
                     except discord.Forbidden:
                         try:
                             msg = await channel.send("\n".join([
-                                f"### 【リマインド】",
+                                f"### 【リマインド：DM送信権限なし】",
                                 f"作成者： {user.mention}",
                                 f"対象者： {mention}",
                                 f" {target.note if target.note else ''}"
