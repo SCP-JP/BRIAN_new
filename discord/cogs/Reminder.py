@@ -4,6 +4,7 @@ import discord
 from discord.commands import slash_command
 from discord.ext import commands, tasks
 
+from config.bot_config import NOTIFY_TO_OWNER
 from db.package.crud.remind_target import RemindTargetCrud
 from db.package.models import RemindTarget
 from db.package.session import get_db
@@ -86,17 +87,34 @@ class Reminder(commands.Cog):
                     except AttributeError:
                         mention = "不明なチャンネル"
 
-                    msg = await user.send(f'リマインド： {mention} {f"（{target.note}）" if target.note else ""}',
-                                          view=view)
+                    try:
+                        msg = await user.send(f'リマインド： {mention} {f"（{target.note}）" if target.note else ""}',
+                                              view=view)
+                    except discord.Forbidden:
+                        try:
+                            msg = await channel.send("\n".join([
+                                f"### 【リマインド】",
+                                f"作成者： {user.mention}",
+                                f"対象者： {mention}",
+                                f" {target.note if target.note else ''}"
+                            ]), view=view)
+                        except discord.Forbidden:
+                            await NOTIFY_TO_OWNER(self.bot, f"Forbidden: DM to {user.name}")
+                            continue
 
                 # target_toがNoneでないなら作成したチャンネルにリマインド
                 else:
-                    msg = await channel.send("\n".join([
-                        f"### 【リマインド】",
-                        f"作成者： {user.mention}",
-                        f"対象者： {target.remind_to}",
-                        f" {target.note if target.note else ''}"
-                    ]), view=view)
+                    try:
+                        msg = await channel.send("\n".join([
+                            f"### 【リマインド】",
+                            f"作成者： {user.mention}",
+                            f"対象者： {target.remind_to}",
+                            f" {target.note if target.note else ''}"
+                        ]), view=view)
+                    except discord.Forbidden:
+                        await NOTIFY_TO_OWNER(self.bot,
+                                              f"Forbidden: Send a msg in {channel.mention}")
+                        continue
 
                 # リマインドメッセージのIDを保存
                 RemindTargetCrud.update_remind_flag(db, target.id, msg.id)
