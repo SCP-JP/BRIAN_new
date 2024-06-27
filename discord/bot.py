@@ -33,5 +33,6 @@ bot.load_extension("cogs.CogManager")
 
 bot.load_extension("cogs.Reminder")
 bot.load_extension("cogs.ThreadListManager")
+bot.load_extension("cogs.ReadLater")
 
 bot.run(bot_config.TOKEN)
