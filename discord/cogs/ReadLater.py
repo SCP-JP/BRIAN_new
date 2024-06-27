@@ -10,13 +10,19 @@ class ReadLaterListPager(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
 
+    def get_page(self, interaction):
+        embeds = interaction.message.embeds
+        if len(embeds) == 0:
+            return 1
+        last_embed = embeds[-1]
+        return int(last_embed.footer.text)
+
     @discord.ui.button(label="<<", style=discord.ButtonStyle.primary, custom_id="read_later:pager:back")
     async def back(self, _: discord.ui.Button, interaction: discord.Interaction):
         target_message_id = interaction.message.id
 
         # 最後のembedからページ数を取得
-        last_embed = interaction.message.embeds[-1]
-        page = int(last_embed.footer.text)
+        page = self.get_page(interaction)
 
         # pageが1以下の場合は何もしない
         if page <= 1:
@@ -34,8 +40,7 @@ class ReadLaterListPager(discord.ui.View):
         with get_db() as db:
             read_later_messages = ReadLaterCrud.find_all_undone_by_user_id(db, interaction.user.id)
 
-        last_embed = interaction.message.embeds[-1]
-        page = int(last_embed.footer.text)
+        page = self.get_page(interaction)
 
         embeds = await ReadLater.create_list_embeds(interaction.client, read_later_messages, page)
         await interaction.response.edit_message(embeds=embeds)
@@ -45,8 +50,7 @@ class ReadLaterListPager(discord.ui.View):
         target_message_id = interaction.message.id
 
         # 最後のembedからページ数を取得
-        last_embed = interaction.message.embeds[-1]
-        page = int(last_embed.footer.text)
+        page = self.get_page(interaction)
 
         # pageが最大ページ数以下の場合は何もしない
         with get_db() as db:
