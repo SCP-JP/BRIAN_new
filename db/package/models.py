@@ -68,3 +68,24 @@ class RemindTarget(Base):
 
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+
+class ReadLaterMessage(Base):
+    __tablename__ = 'read_later_message'
+
+    # PK
+    id = Column(Integer, primary_key=True)
+
+    # メッセージを保存したユーザー
+    user_id = Column(BigInteger, nullable=False)
+    # ギルドID
+    guild_id = Column(BigInteger, nullable=False)
+    # メッセージを保存したチャンネル
+    channel_id = Column(BigInteger, nullable=False)
+    # メッセージID
+    message_id = Column(BigInteger, nullable=False)
+    # doneかどうか
+    is_done = Column(Boolean, default=False)
+
+    created_at = Column(DateTime, default=datetime.now)
+    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
