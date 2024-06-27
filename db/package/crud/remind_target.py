@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 from sqlalchemy.orm import Session
 
@@ -50,6 +50,11 @@ class RemindTargetCrud:
         # interval_hours = round((existing_target.remind_at.timestamp() - existing_target.created_at.timestamp()) / 3600)
         interval_hours = 24
         remind_at = existing_target.remind_at + timedelta(hours=interval_hours)
+
+        # remind_atが現在時刻より前の場合は、それを超えるまで24時間を追加
+        while remind_at <= datetime.now():
+            remind_at += timedelta(hours=24)
+
         return RemindTargetCrud.create(
             db, existing_target.user_id, existing_target.channel_id, existing_target.note,
             remind_at, existing_target.remind_to,
