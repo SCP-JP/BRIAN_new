@@ -31,6 +31,7 @@ bot = commands.Bot(help_command=None,
 bot.load_extension("cogs.Admin")
 bot.load_extension("cogs.CogManager")
 
+bot.load_extension("cogs.InactiveCheckHelper")
 bot.load_extension("cogs.Reminder")
 bot.load_extension("cogs.ThreadListManager")
 bot.load_extension("cogs.ReadLater")
