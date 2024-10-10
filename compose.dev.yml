@@ -35,7 +35,7 @@ services:
       - pg_data:/var/lib/postgresql/data
     restart: unless-stopped
     healthcheck:
-      test: pg_isready -U user -d main
+      test: pg_isready -U postgres -d main
       interval: 2s
       timeout: 5s
       retries: 30
