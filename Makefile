@@ -30,6 +30,9 @@ reset:
 logs:
 	docker compose -f $(COMPOSE_YML) logs -f
 
+logs\:once:
+	docker compose -f $(COMPOSE_YML) logs
+
 ps:
 	docker compose -f $(COMPOSE_YML) ps
 
@@ -61,9 +64,6 @@ poetry\:reset:
 	poetry env remove $(which python)
 	poetry install
 
-poetry\:shell:
-	poetry shell
-
 dev\:setup:
 	poetry install --with $(POETRY_GROUPS)
 
@@ -75,7 +75,7 @@ db\:migrate:
 	docker compose -f $(COMPOSE_YML) build db-migrator
 	docker compose -f $(COMPOSE_YML) run --rm db-migrator /bin/bash -c "alembic upgrade head"
 
-envs\:init:
+envs\:setup:
 	cp envs/discord.env.example envs/discord.env
 	cp envs/db.env.example envs/db.env
 	cp envs/sentry.env.example envs/sentry.env

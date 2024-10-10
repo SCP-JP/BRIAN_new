@@ -1,10 +1,10 @@
-FROM python:3.12.5-slim
+FROM python:3.12.7-slim
 
 WORKDIR /app
 
 RUN apt update && \
     apt upgrade -y && \
-    apt install -y build-essential git nano \
+    apt install -y build-essential git nano curl \
     tzdata libpq-dev gcc make && \
     pip install --upgrade pip poetry
 
