@@ -1,8 +1,8 @@
 #file: noinspection YAMLSchemaValidation
-name: CD
+name: Deploy
 on:
   push:
-    branches: [ change_this_value_to_main ]
+    branches: [ main ]
 jobs:
   deploy:
     runs-on: ubuntu-latest
