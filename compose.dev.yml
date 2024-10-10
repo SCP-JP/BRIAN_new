@@ -6,33 +6,59 @@ services:
     volumes:
       - ./discord:/app
       - ./db:/app/db
-      - ./redis:/app/redis_crud
     env_file:
       - ./envs/discord.env
       - ./envs/db.env
       - ./envs/sentry.env
-    restart: always
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
     depends_on:
       db:
         condition: service_healthy
+      db-migrator:
+        condition: service_completed_successfully
     networks:
       - db
 
   db:
-    image: postgres:16.1
+    image: postgres:17
     env_file:
       - ./envs/db.env
+    environment:
+      POSTGRES_DB: main
     volumes:
       - pg_data:/var/lib/postgresql/data
-      - ./db/init:/docker-entrypoint-initdb.d
-    ports:
-      - "127.0.0.1:5432:5432"
-    restart: always
+    restart: unless-stopped
     healthcheck:
-      test: pg_isready -U postgres
+      test: pg_isready -U user -d main
       interval: 2s
       timeout: 5s
       retries: 30
+    networks:
+      - db
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    volumes:
+      - ./pgadmin/config/servers.json:/pgadmin4/servers.json
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@example.com
+      PGADMIN_DEFAULT_PASSWORD: password
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    ports:
+      - "127.0.0.1:8080:80"
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      db-migrator:
+        condition: service_completed_successfully
     networks:
       - db
 
@@ -45,6 +71,7 @@ services:
       - ./db:/app
     env_file:
       - ./envs/db.env
+    restart: no
     depends_on:
       db:
         condition: service_healthy
@@ -53,7 +80,6 @@ services:
 
 volumes:
   pg_data:
-
 
 networks:
   db:
