@@ -20,7 +20,7 @@ optional = true
 flake8 = "^7.1.1"
 mypy = "^1.11.1"
 isort = "^6.0.0"
-black = "^24.8.0"
+black = "^25.1.0"
 
 [tool.poetry.group.db]
 optional = true
