@@ -1075,14 +1075,14 @@ files = [
 
 [[package]]
 name = "py-cord"
-version = "2.7.0"
+version = "2.7.1"
 description = "A Python wrapper for the Discord API"
 optional = false
 python-versions = "<3.14,>=3.10"
 groups = ["discord"]
 files = [
-    {file = "py_cord-2.7.0-py3-none-any.whl", hash = "sha256:7f5badc55f6cd80bac0e65e77a10a3aaac17bc7932c2088035dd925900a4c29e"},
-    {file = "py_cord-2.7.0.tar.gz", hash = "sha256:6f947e6b08ae2884777a3fcb1150d7c0df14c4461e8015ed3d2f29c081e79dfd"},
+    {file = "py_cord-2.7.1-py3-none-any.whl", hash = "sha256:d95301226f0642f6f3b23e21c31987ebbe23fdb7007cbc8143b010eb6780dec1"},
+    {file = "py_cord-2.7.1.tar.gz", hash = "sha256:100935f37e77ba8ac1e3eff0b180e6d69bcac083de81d4c83d42327d9a2eddee"},
 ]
 
 [package.dependencies]
@@ -1090,7 +1090,7 @@ aiohttp = ">=3.6.0,<4.0"
 typing_extensions = ">=4.12.0,<5"
 
 [package.extras]
-docs = ["furo (==2024.8.6)", "levenshtein (==0.27.3)", "myst-parser[linkify] (==4.0.1)", "sphinx (==8.2.3)", "sphinx-autodoc-typehints (==3.5.2)", "sphinx-copybutton (==0.5.2)", "sphinx-intl (==2.3.2)", "sphinxcontrib-websupport (==2.0.0)", "sphinxcontrib_trio (==1.1.2)", "sphinxext-opengraph (==0.13.0)", "typing_extensions (==4.15.0)"]
+docs = ["furo (==2025.12.19)", "levenshtein (==0.27.3)", "myst-parser[linkify] (==5.0.0)", "sphinx (==9.1.0)", "sphinx-autodoc-typehints (==3.6.2)", "sphinx-copybutton (==0.5.2)", "sphinx-intl (==2.3.2)", "sphinxcontrib-websupport (==2.0.0)", "sphinxcontrib_trio (==1.2.0)", "sphinxext-opengraph (==0.13.0)", "typing_extensions (==4.15.0)"]
 speed = ["aiohttp[speedups]", "msgspec (>=0.20.0,<0.21.0)"]
 voice = ["PyNaCl (>=1.6,<1.7)"]
 
